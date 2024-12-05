@@ -3,8 +3,8 @@ const content = document.getElementById("content");
 const titleContainer = document.querySelector('.title-container');
 
 // Web Audio API setup for honk and siren sounds
-let honkAudio = new Audio("./audio/honk.mp3");
-let sirenAudio = new Audio("./audio/siren.mp3");
+let honkAudio = new Audio("./Audio/honk.mp3");
+let sirenAudio = new Audio("./Audio/siren.mp3");
 honkAudio.load();
 sirenAudio.load();
 
