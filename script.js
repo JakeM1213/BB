@@ -2,61 +2,27 @@ const scrollContainer = document.getElementById("scrollContainer");
 const content = document.getElementById("content");
 const titleContainer = document.querySelector('.title-container');
 
-// Web Audio API setup for honk and siren sounds
-let honkAudio = new Audio("./Audio/honk.mp3");
-let sirenAudio = new Audio("./Audio/siren.mp3");
+// Get embedded audio elements from the HTML
+const honkAudio = document.getElementById("honkAudio");
+const sirenAudio = document.getElementById("sirenAudio");
 
-// Ensure the audio loops indefinitely
-honkAudio.loop = true;
-sirenAudio.loop = true;
-
-// Play the sounds automatically when the page loads
+// Ensure audio is looped and autoplay works
 window.addEventListener("load", () => {
-  playAudio();
+  try {
+    honkAudio.loop = true;
+    sirenAudio.loop = true;
+
+    honkAudio.play().catch((error) => {
+      console.error("Honk audio autoplay error:", error);
+    });
+
+    sirenAudio.play().catch((error) => {
+      console.error("Siren audio autoplay error:", error);
+    });
+  } catch (error) {
+    console.error("Audio setup error:", error);
+  }
 });
-
-// Create a fallback button to handle autoplay restrictions
-function createFallbackButton() {
-  const playButton = document.createElement("button");
-  playButton.innerText = "Start Audio";
-  playButton.style.position = "absolute";
-  playButton.style.top = "50%";
-  playButton.style.left = "50%";
-  playButton.style.transform = "translate(-50%, -50%)";
-  playButton.style.padding = "10px 20px";
-  playButton.style.fontSize = "16px";
-  playButton.style.zIndex = "1000";
-  playButton.style.backgroundColor = "#000";
-  playButton.style.color = "#fff";
-  playButton.style.border = "none";
-  playButton.style.cursor = "pointer";
-
-  playButton.addEventListener("click", () => {
-    playAudio();
-    playButton.remove(); // Remove the button after clicking
-  });
-
-  document.body.appendChild(playButton);
-}
-
-// Function to play the audio
-function playAudio() {
-  honkAudio
-    .play()
-    .then(() => console.log("Honk audio playing"))
-    .catch((error) => {
-      console.error("Error playing honkAudio:", error);
-      createFallbackButton(); // Create fallback button if autoplay fails
-    });
-
-  sirenAudio
-    .play()
-    .then(() => console.log("Siren audio playing"))
-    .catch((error) => {
-      console.error("Error playing sirenAudio:", error);
-      createFallbackButton(); // Create fallback button if autoplay fails
-    });
-}
 
 // Cryptic messages
 const crypticMessages = [
