@@ -5,44 +5,57 @@ const titleContainer = document.querySelector('.title-container');
 // Web Audio API setup for honk and siren sounds
 let honkAudio = new Audio("./Audio/honk.mp3");
 let sirenAudio = new Audio("./Audio/siren.mp3");
-honkAudio.load();
-sirenAudio.load();
 
-let isPlaying = false;
-let sirenTriggered = false;
+// Ensure the audio loops indefinitely
+honkAudio.loop = true;
+sirenAudio.loop = true;
 
-// Play sounds on user interaction
-document.body.addEventListener('click', () => {
-  playSounds();
+// Play the sounds automatically when the page loads
+window.addEventListener("load", () => {
+  playAudio();
 });
 
-function playSounds() {
-  if (isPlaying) return;
-  isPlaying = true;
+// Create a fallback button to handle autoplay restrictions
+function createFallbackButton() {
+  const playButton = document.createElement("button");
+  playButton.innerText = "Start Audio";
+  playButton.style.position = "absolute";
+  playButton.style.top = "50%";
+  playButton.style.left = "50%";
+  playButton.style.transform = "translate(-50%, -50%)";
+  playButton.style.padding = "10px 20px";
+  playButton.style.fontSize = "16px";
+  playButton.style.zIndex = "1000";
+  playButton.style.backgroundColor = "#000";
+  playButton.style.color = "#fff";
+  playButton.style.border = "none";
+  playButton.style.cursor = "pointer";
 
-  sirenAudio.play().catch(error => console.error("Error playing sirenAudio: ", error));
-  setTimeout(() => {
-    honkAudio.play().catch(error => console.error("Error playing honkAudio: ", error));
-  }, 10000);
+  playButton.addEventListener("click", () => {
+    playAudio();
+    playButton.remove(); // Remove the button after clicking
+  });
 
-  setTimeout(() => fadeOutAudio(sirenAudio, 5000), 5000);
-  setTimeout(() => fadeOutAudio(honkAudio, 5000), 15000);
-  setTimeout(() => (isPlaying = false), 20000);
+  document.body.appendChild(playButton);
 }
 
-function fadeOutAudio(audio, duration) {
-  const fadeInterval = 50;
-  const fadeStep = audio.volume / (duration / fadeInterval);
-  const fadeOut = setInterval(() => {
-    if (audio.volume > 0.05) {
-      audio.volume -= fadeStep;
-    } else {
-      clearInterval(fadeOut);
-      audio.pause();
-      audio.currentTime = 0;
-      audio.volume = 1;
-    }
-  }, fadeInterval);
+// Function to play the audio
+function playAudio() {
+  honkAudio
+    .play()
+    .then(() => console.log("Honk audio playing"))
+    .catch((error) => {
+      console.error("Error playing honkAudio:", error);
+      createFallbackButton(); // Create fallback button if autoplay fails
+    });
+
+  sirenAudio
+    .play()
+    .then(() => console.log("Siren audio playing"))
+    .catch((error) => {
+      console.error("Error playing sirenAudio:", error);
+      createFallbackButton(); // Create fallback button if autoplay fails
+    });
 }
 
 // Cryptic messages
@@ -76,9 +89,9 @@ function showCrypticMessage(scrollDepth) {
 
 // Infinite scrolling and effects
 function addMoreContent() {
-  const newContent = document.createElement('div');
-  newContent.style.height = '200vh';
-  newContent.style.background = 'transparent';
+  const newContent = document.createElement("div");
+  newContent.style.height = "200vh";
+  newContent.style.background = "transparent";
   content.appendChild(newContent);
 }
 
@@ -200,8 +213,8 @@ function floodCrypticText() {
   const randomTexts = ["3f5f8~*^^404", "bzZ#z~r", "!@%$", "xYZ*&%9", "~404~$$!"];
 
   for (let i = 0; i < 20; i++) {
-    const text = document.createElement('div');
-    text.classList.add('crypticFlood');
+    const text = document.createElement("div");
+    text.classList.add("crypticFlood");
     text.innerText = randomTexts[Math.floor(Math.random() * randomTexts.length)];
     text.style.left = `${Math.random() * window.innerWidth}px`;
     text.style.top = `${Math.random() * window.innerHeight}px`;
